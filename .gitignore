@@ -1,0 +1,14 @@
+MNISTDataset/data/MNIST/processed/test.pt
+MNISTDataset/data/MNIST/processed/training.pt
+MNISTDataset/data/MNIST/raw/t10k-images-idx3-ubyte
+MNISTDataset/data/MNIST/raw/t10k-images-idx3-ubyte.gz
+MNISTDataset/data/MNIST/raw/t10k-labels-idx1-ubyte
+MNISTDataset/data/MNIST/raw/t10k-labels-idx1-ubyte.gz
+MNISTDataset/data/MNIST/raw/train-images-idx3-ubyte
+MNISTDataset/data/MNIST/raw/train-images-idx3-ubyte.gz
+MNISTDataset/data/MNIST/raw/train-labels-idx1-ubyte
+MNISTDataset/data/MNIST/raw/train-labels-idx1-ubyte.gz
+loss_image.png
+accuracy_image.png
+sample.pth
+model.pth
