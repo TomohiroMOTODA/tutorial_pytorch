@@ -159,7 +159,7 @@ def main():
     BATCH_SIZE = 100
     WEIGHT_DECAY = 0.005
     LEARNING_RATE = 0.0001
-    EPOCH = 10
+    EPOCH = 100
 
     # definition
     trans = torchvision.transforms.ToTensor()
