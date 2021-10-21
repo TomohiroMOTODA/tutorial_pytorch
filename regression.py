@@ -3,113 +3,21 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchvision
-
-from sklearn.preprocessing import StandardScaler
+import torch.utils.data as data
+from torch.utils.data import Dataset
 
 import numpy as np
 import pandas as pd
 import csv
 import matplotlib.pyplot as plt
 import random
-
-import argparse
+# import argparse
 from tqdm import tqdm
 
-import torch.utils.data as data
-from torch.utils.data import Dataset
+from load import dataset
+from load import test_data
 
-class dataset():
-    def __init__(self,data):
-
-        self.drag = []
-        self.state_index = []
-        self.put = []
-        self.state = []
-        self.target = []
-        self.rotate_list = []
-
-        for i in range(2):
-            self.drag.append(float(data[i])*10)
-
-
-        for i in range(3):
-            self.put.append(float(data[i + 2]))
-
-        for i in range(4):
-            if i != 3:
-                self.target.append(float(data[i + 5]))
-            else:
-                self.rotate_list.append(float(data[i + 5]))
-
-           
-
-        self.state.append(self.target)
-        
-        for i in range(5):
-            state = []
-            state.append(i)
-            for j in range(4):
-                    state.append(float(data[i*4 + 9 + j]))
-            
-            self.state_index.append(state)
-        # 状態の一意性が故にソートする
-        self.state_index.sort(key = lambda x: x[3])
-
-        for i in range(5):
-            state = []
-            for j in range(5):
-                if j >= 1 and j <= 3:
-                    state.append(self.state_index[i][j])
-                if j == 4:
-                    self.rotate_list.append(self.state_index[i][j])
-                
-            self.state.append(state)
-
-
-    def get_dataset(self):
-        
-        data_array_putting = []
-        data_array_position = []
-
-        for i in range(3):
-            data_array_putting .append(self.put[i])
-
-        for i in range(6):
-            for j in range(3):
-                data_array_position.append(self.state[i][j])
-
-        return np.array(data_array_putting+data_array_position)
-        #return np.array(data_array_putting), np.array(data_array_position)
-
-class test_data():
-    def __init__(self,data,input):
-
-        self.state = []
-        target = []
-
-        for i in range(3):
-            target.append(float(data[29 + i]))
-        
-        self.state.append(target)
-            
-        # 入力データに合わせてソートする
-        for i in range(5):
-            state = []
-            for j in range(3):
-                state.append(float(data[input.state_index[i][0]*4 + 33 + j]))
-            
-            self.state.append(state)
-     
-    def get_testdata(self):
-        
-        data_array = []
-
-        for i in range(6):
-            for j in range(3):
-                data_array.append(self.state[i][j])
-
-        return np.array(data_array)    
-
+# data loader
 class RegDataset(data.Dataset):
     def __init__(self, csv_dir, is_train, transform=None):
         self.csv_path = csv_dir
@@ -154,6 +62,8 @@ class RegDataset(data.Dataset):
         # ディレクトリ内の画像枚数を返す。
         return len(self.x)
 
+
+# network model
 class RegNagato(nn.Module):
     def __init__(self):
         super(RegNagato, self).__init__()
@@ -244,10 +154,6 @@ def train(trainloader, testloader, batch_size, epoch, lr, weight_decay, model_pa
             loss = criterion(outputs, labels) # 損失関数
 
             sum_loss += loss.item()                            #lossを加算
-            #_, predicted = outputs.max(1)                      #出力の最大値の添字(予想位置)を取得
-            #sum_total += labels.size(0)                        #labelの数を加算（カウント）
-            #sum_correct += (predicted == labels).sum().item()  #予想位置と実際の正解を比べ,正解している数を加算
-
             loss.backward()     # 損失から勾配を計算
             optimizer.step()    # 勾配を用いてパラメータを更新        
 
@@ -262,9 +168,6 @@ def train(trainloader, testloader, batch_size, epoch, lr, weight_decay, model_pa
             outputs = net(inputs)
             loss = criterion(outputs, labels)
             sum_loss += loss.item()
-            #_, predicted = outputs.max(1)
-            #sum_total += labels.size(0)
-            #sum_correct += (predicted == labels).sum().item()
         print("-- test  mean loss={}".format(sum_loss*batch_size/len(testloader.dataset)))
         test_loss_value.append(sum_loss*batch_size/len(testloader.dataset))
 
@@ -289,6 +192,7 @@ def train(trainloader, testloader, batch_size, epoch, lr, weight_decay, model_pa
     #'''
 
 def main():
+    # Paramater
     PATH_TO_CSV = 'test.csv'
     BATCH_SIZE = 16
     WEIGHT_DECAY = 0.005
@@ -307,5 +211,5 @@ def main():
     train (trainloader, testloader, BATCH_SIZE, EPOCH, LEARNING_RATE, WEIGHT_DECAY, model_path='model_reg_2.pth')
 
 if __name__ == '__main__':
-    # main()
-    eval()
+    main() # train mode
+    # eval() # evaluate mode
