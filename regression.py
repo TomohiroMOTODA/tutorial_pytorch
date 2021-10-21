@@ -62,7 +62,6 @@ class RegDataset(data.Dataset):
         # ディレクトリ内の画像枚数を返す。
         return len(self.x)
 
-
 # network model
 class RegNagato(nn.Module):
     def __init__(self):
@@ -81,9 +80,7 @@ class RegNagato(nn.Module):
         x = self.fc3(x)
         return x
 
-def eval(test_num=5):
-
-    csv_path = 'validation.csv'
+def eval(test_num=5, csv_path = 'validation.csv'):
     criterion = nn.MSELoss() # 最小二乗誤差
 
     f = open(csv_path,'r')
@@ -131,8 +128,8 @@ def train(trainloader, testloader, batch_size, epoch, lr, weight_decay, model_pa
     net = RegNagato()
     net = net.to(device)
     criterion = nn.MSELoss()
-    optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=weight_decay)
-    # optimizer = optim.Adam(net.parameters(), lr=lr, betas=(0.9, 0.999), eps=1e-08, weight_decay=weight_decay, amsgrad=False)
+    optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=weight_decay) # 最適化アルゴリズムがSGD（確率的勾配降下法）の場合
+    # optimizer = optim.Adam(net.parameters(), lr=lr, betas=(0.9, 0.999), eps=1e-08, weight_decay=weight_decay, amsgrad=False) # 最適化アルゴリズムがAdam（Adaptive Moment Estimation）の場合
     
     print (net)
 
@@ -198,11 +195,6 @@ def main():
     WEIGHT_DECAY = 0.005
     LEARNING_RATE = 0.0001
     EPOCH = 50
-
-    # definition
-    trans = torchvision.transforms.ToTensor()
-    # Normalize
-    trans = torchvision.transforms.Compose([torchvision.transforms.ToTensor(),torchvision.transforms.Normalize((0.5,), (0.5,))])
 
     trainset = RegDataset(PATH_TO_CSV, is_train = True)
     testset = RegDataset(PATH_TO_CSV, is_train = False)
