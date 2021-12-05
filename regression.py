@@ -7,7 +7,7 @@ import torch.utils.data as data
 from torch.utils.data import Dataset
 
 import numpy as np
-import pandas as pd
+# import pandas as pd
 import csv
 import matplotlib.pyplot as plt
 import random
@@ -80,7 +80,7 @@ class RegNagato(nn.Module):
         x = self.fc3(x)
         return x
 
-def eval(test_num=5, csv_path = 'validation.csv'):
+def eval(test_num=5, csv_path='validation.csv', model_path='model_reg_2.pth', result_path='result.csv'):
     criterion = nn.MSELoss() # 最小二乗誤差
 
     f = open(csv_path,'r')
@@ -101,9 +101,9 @@ def eval(test_num=5, csv_path = 'validation.csv'):
     net = net.eval() # 評価モードにする
 
     # パラメータの読み込み
-    param = torch.load('model_reg_2.pth')
+    param = torch.load(model_path)
     net.load_state_dict(param)
-    with open('result.csv', 'w', newline='') as f:
+    with open(result_path, 'w', newline='') as f:
         writer = csv.writer(f)
         for i in range(test_num):
             idx = random.randint(0,len(x)-1)
@@ -121,8 +121,7 @@ def eval(test_num=5, csv_path = 'validation.csv'):
             writer.writerow(t[idx].numpy())
 
 def train(trainloader, testloader, batch_size, epoch, lr, weight_decay, model_path='model.pth'):
-
-    # デバイスの設
+    # デバイスの設定
     print('Wait...')
     device = torch.device("cuda:0") # "cpu": CPUで計算する場合，GPUを使う場合 "cuda:0"などにする．
     net = RegNagato()
@@ -131,6 +130,7 @@ def train(trainloader, testloader, batch_size, epoch, lr, weight_decay, model_pa
     optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=weight_decay) # 最適化アルゴリズムがSGD（確率的勾配降下法）の場合
     # optimizer = optim.Adam(net.parameters(), lr=lr, betas=(0.9, 0.999), eps=1e-08, weight_decay=weight_decay, amsgrad=False) # 最適化アルゴリズムがAdam（Adaptive Moment Estimation）の場合
     
+    # ネットワーク構造の出力
     print (net)
 
     train_loss_value=[]
